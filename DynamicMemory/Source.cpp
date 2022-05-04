@@ -1,14 +1,22 @@
 #include<iostream>
 using namespace std;
+using std::cin;
+using std::cout;
+using std::endl;
+
 void FillRand(int arr[], const int n);
+void FillRand(int** arr, const int rows, const int cols);
 void Print(int* arr, const int n);
+void Print(int** arr, const int rows, const int cols);
 #define tab "\t"
-int* push_back(int arr[],  int n, int value);
-
-
+int* push_back(int arr[],  int& n, int value);
+int* insert(int arr[], int& n, int value, int ind);
+//#define DYNAMIC_MEMORY_1
+#define DYNAMIC_MEMORY_2
 void main()
 {
 	setlocale(LC_ALL, "");
+#ifdef DYNAMIC_MEMORY_1
 	//new
 	int n;
 
@@ -23,13 +31,18 @@ void main()
 	int value;
 	cout << "¬ведите добавл€емое значение "; cin >> value;
 	arr=push_back(arr, n, value);
-	Print(arr, n+1);
+	Print(arr, n);
 	/*arr[n] = value;
 	n++;
 	Print(arr, n);*/
-	delete[]arr;//Heap(куча)-это пам€ть, принадлежаща€ операционной системе. 
 	/*Print(arr, n);*/
+	 int ind;
+	cout << "¬ведите значение "; cin >> value;
+	cout << "¬ведите индекс "; cin >> ind;
+	arr = insert(arr, n, value, ind);
+	Print(arr, n);
 	
+	delete[]arr;//Heap(куча)-это пам€ть, принадлежаща€ операционной системе. 
 	/*const int SIZE = 5;
 	int brr[SIZE];
 	cout << typeid(brr).name() << endl;
@@ -37,13 +50,49 @@ void main()
 	Print(brr, SIZE);*/
 	//вс€ пам€ть за пределами нашей программы
 	
+#endif
+	int rows; //кол-во строк ддм
+	int cols; //кол-во эл. строки
+	cout << "¬ведите количество строк: "; cin >> rows;
+	cout << "¬ведите количество элементов строки: "; cin >> cols;
+	//1. создаЄм массив указателей 
+	int** arr = new int*[rows];
+	//2. создаЄм строки дм
+	for (int i = 0; i < rows; i++)
+	{
+		arr[i] = new int[cols] {};
+	}
+	//3. обращение к элементам ддм
+	FillRand(arr, rows, cols);
+	Print(arr, rows, cols);
+	//4. удаление массива 
+	//4.1 удаление строк
+	for (int i = 0; i < rows; i++)
+	{
+		delete[] arr[i];
+	}
+	//4.2 удаление массив указателей
+	delete[] arr;
 }
+
+
+
 void FillRand(int arr[], const int n)
 {
 	for (int i = 0; i < n; i++)
 	{
 		arr[i] = rand() % 100;
 		//либо *(arr + i) = rand() %100;
+	}
+}
+void FillRand(int** arr, const int rows, const int cols)
+{
+	for (int i = 0; i < rows; i++)
+	{
+		for (int j = 0; j < cols; j++)
+		{
+			arr[i][j] = rand() % 100;
+		}
 	}
 }
 void Print(int* arr, const int n)
@@ -54,8 +103,20 @@ void Print(int* arr, const int n)
 		//[]-оператор индексировани€
 		cout << arr[i] << tab;
 	}
+	cout << endl;
 }
-int* push_back(int arr[],  int n, int value)
+void Print(int** arr, const int rows, const int cols)
+{
+	for (int i = 0; i < rows; i++)
+	{
+		for (int j = 0; j < cols; j++)
+		{
+			cout << arr[i][j] << "\t";
+		}
+		cout << endl;
+	}
+}
+int* push_back(int arr[],  int& n, int value)
 {
 	//1. —оздаЄм буфферный массив нужного размера (в данном случае на 1 эл. больше)
 	int* buffer = new int[n + 1];
@@ -71,5 +132,17 @@ int* push_back(int arr[],  int n, int value)
 	n++;
 	//7. Ёлемент добавлен 
 	return buffer;
+}
+int* insert(int arr[], int& n, int value, int ind)
+{
+	int* newint = new int[n + 1];
+	for (int i = 0; i < ind; i++)newint[i] = arr[i];
+	/*delete[] arr;*/
+	newint[ind] = value;
+	for (int i = ind; i < n; i++)newint[i + 1] = arr[i];
+	delete[] arr;
+	n++;
+	/*arr = newint;*/ 
+	return newint;
 }
 
