@@ -7,12 +7,16 @@ using std::endl;
 void FillRand(int arr[], const int n);
 void FillRand(int** arr, const int rows, const int cols);
 void Print(int* arr, const int n);
-void Print(int** arr, const int rows, const int cols);
+void Print(int** arr,  int rows, const int cols);
 #define tab "\t"
 int* push_back(int arr[],  int& n, int value);
 int* insert(int arr[], int& n, int value, int ind);
+int* push_front(int arr[], int& n, int value);
+int* pop_back(int arr[], int& n);
 //#define DYNAMIC_MEMORY_1
 #define DYNAMIC_MEMORY_2
+void push_rows_back(int**& arr, int& rows, const int cols);
+void push_rows_front(int**& arr, int& rows,  const int cols);
 void main()
 {
 	setlocale(LC_ALL, "");
@@ -41,7 +45,14 @@ void main()
 	cout << "¬ведите индекс "; cin >> ind;
 	arr = insert(arr, n, value, ind);
 	Print(arr, n);
-	
+	int hex;
+	cout << "¬ведите значение: "; cin >> hex;
+	arr = push_front(arr, n, value);
+	Print(arr, n);
+	int m;
+	cout << "¬ведите значение: "; cin >> m;
+	arr = pop_back(arr, n);
+	Print(arr, n);
 	delete[]arr;//Heap(куча)-это пам€ть, принадлежаща€ операционной системе. 
 	/*const int SIZE = 5;
 	int brr[SIZE];
@@ -51,6 +62,7 @@ void main()
 	//вс€ пам€ть за пределами нашей программы
 	
 #endif
+#ifdef DYNAMIC_MEMORY_2
 	int rows; //кол-во строк ддм
 	int cols; //кол-во эл. строки
 	cout << "¬ведите количество строк: "; cin >> rows;
@@ -67,12 +79,23 @@ void main()
 	Print(arr, rows, cols);
 	//4. удаление массива 
 	//4.1 удаление строк
+	//4.2 удаление массив указателей
+	
+	int value;
+	cout << "¬ведите добавл€емое значение "; cin >> value;
+	push_rows_back (arr, rows, cols);
+	Print(arr, rows,cols);
+	int hex;
+	cout << "¬ведите добавл€емое значение "; cin >> hex;
+	 push_rows_front(arr, rows, cols);
+	Print(arr, rows, cols);
+
 	for (int i = 0; i < rows; i++)
 	{
 		delete[] arr[i];
 	}
-	//4.2 удаление массив указателей
 	delete[] arr;
+#endif
 }
 
 
@@ -133,6 +156,31 @@ int* push_back(int arr[],  int& n, int value)
 	//7. Ёлемент добавлен 
 	return buffer;
 }
+int* push_front(int arr[], int& n, int value)
+{
+	int*buffer = new int[n + 1];
+	for (int i = 0; i < n; i++)
+	{
+		buffer[i] = arr[i];
+	}
+	delete[] arr;
+	arr = buffer;
+	arr[0] = value;
+	n++;
+	return arr;
+}
+int* pop_back(int arr[], int& n)
+{
+	int* buffer = new int[n - 1];
+	for (int i = 0; i < n - 1; i++)
+	{
+		buffer[i] = arr[i];
+	}
+	delete[] arr;
+	arr = buffer;
+	n--;
+	return arr;
+}
 int* insert(int arr[], int& n, int value, int ind)
 {
 	int* newint = new int[n + 1];
@@ -145,4 +193,29 @@ int* insert(int arr[], int& n, int value, int ind)
 	/*arr = newint;*/ 
 	return newint;
 }
-
+void push_rows_back(int**& arr, int& rows,  const int cols)
+{
+	int** buffer = new int*[rows + 1];
+	for (int i = 0; i < rows+1; i++) 
+	{      
+		buffer[i] = arr[i];
+	}
+	delete[] arr;
+	arr = buffer;
+	buffer[rows] = new int [cols] {};
+	++rows;
+}
+void push_rows_front(int**& arr, int& rows, const int cols)
+{
+	int** buffer = arr;
+	buffer = new int*[rows+1];
+	for (int i = 0; i < rows; i++)
+	{
+		buffer[i + 1] = arr[i];
+	}
+	delete[] arr;
+	buffer[0] = new int [cols] {};
+	arr = buffer;
+	rows++;
+	
+}
